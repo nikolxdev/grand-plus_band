@@ -39,17 +39,14 @@
     genre: ["Narodna muzika", "Starogradska muzika", "Zabavna muzika", "Pop"],
     areaServed: (cfg.serviceAreas || []).map(function (a) { return { "@type": "Place", name: a }; }),
     sameAs: [cfg.instagram],
-    member: $$(".member").map(function (m) {
-      return { "@type": "Person", name: $("h3", m).textContent, roleName: $("p", m).textContent };
+    member: $$(".hero-strip figure").map(function (f) {
+      return { "@type": "Person", name: $("b", f).textContent, roleName: $("span", f).textContent };
     })
   });
   document.head.appendChild(ld);
 
   /* ---------- Navigacija ---------- */
   var nav = $("#nav"), toggle = $("#navToggle"), links = $("#navLinks");
-  function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 30); }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
   function setMenu(open) {
     links.classList.toggle("open", open);
     nav.classList.toggle("menu-open", open);
@@ -90,12 +87,21 @@
   var selected = null;
   var busyCache = {};   // "2026-11" -> Set datuma
   var useGoogle = !!(cfg.googleCalendarId && cfg.googleApiKey);
-  var calDays = $("#calDays"), calTitle = $("#calTitle"), calNote = $("#calNote");
+  // Bez povezanog kalendara ne prikazujemo ni slobodne ni zauzete dane, da posetilac ne bi video netačnu dostupnost
+  var knowsAvailability = useGoogle || !!cfg.showDemoBusy;
+  var calDays = $("#calDays"), calTitle = $("#calTitle"), calNote = $("#calNote"), calMsg = $("#calMsg");
+  var calendarEl = $(".calendar");
   var prevBtn = $("#calPrev"), nextBtn = $("#calNext");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  calNote.textContent = useGoogle
-    ? "Kalendar ažuriramo redovno, a svaki termin potvrđujemo i porukom."
-    : "Primer: zauzeti datumi su izmišljeni dok se ne poveže pravi kalendar.";
+  function setAvailabilityKnown(known) {
+    knowsAvailability = known;
+    calendarEl.classList.toggle("unknown", !known);
+    calNote.textContent = known
+      ? "Kalendar ažuriramo redovno, a svaki termin potvrđujemo i porukom."
+      : "Izaberite datum i pošaljite upit, a mi vam javljamo da li je slobodan.";
+  }
+  setAvailabilityKnown(knowsAvailability);
 
   function monthKey(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1); }
 
@@ -148,10 +154,10 @@
     var p = useGoogle
       ? fetchGoogleBusy(y, m).catch(function (err) {
           console.warn(err);
-          calNote.textContent = "Kalendar trenutno nije dostupan. Pošaljite upit i potvrdićemo da li je datum slobodan.";
+          setAvailabilityKnown(false); // greška ne sme da prikaže sve dane kao slobodne
           return new Set();
         })
-      : Promise.resolve(demoBusy(y, m));
+      : Promise.resolve(cfg.showDemoBusy ? demoBusy(y, m) : new Set());
     return p.then(function (set) { busyCache[key] = set; return set; });
   }
 
@@ -180,9 +186,9 @@
     for (var i = 0; i < offset; i++) html += '<span class="day empty"></span>';
     for (var d = 1; d <= daysInMonth; d++) {
       var date = new Date(y, m, d), key = dateKey(date), cls = "day", label = formatLong(date), disabled = "";
-      if (date < today) { cls += " past"; disabled = " disabled"; }
+      if (date <= today) { cls += " past"; disabled = " disabled"; }
       else if (busy.has(key)) { cls += " busy"; label += " (zauzeto)"; disabled = ' aria-disabled="true"'; }
-      else label += " (slobodno)";
+      else if (knowsAvailability) label += " (slobodno)";
       if (date.getTime() === today.getTime()) cls += " today";
       if (selected && key === dateKey(selected)) cls += " selected";
       html += '<button type="button" class="' + cls + '" data-date="' + key + '" aria-label="' + label + '"' + disabled + ">" + d + "</button>";
@@ -194,9 +200,10 @@
     var btn = e.target.closest(".day");
     if (!btn || btn.disabled || btn.classList.contains("past")) return;
     if (btn.classList.contains("busy")) {
-      showError("Taj dan smo već zauzeti. Izaberite drugi datum ili nas pozovite.");
+      calMsg.textContent = "Taj dan smo već zauzeti. Izaberite drugi datum ili nas pozovite.";
       return;
     }
+    calMsg.textContent = "";
     var parts = btn.dataset.date.split("-");
     selected = new Date(+parts[0], +parts[1] - 1, +parts[2]);
     $$(".day.selected", calDays).forEach(function (b) { b.classList.remove("selected"); });
@@ -205,7 +212,7 @@
     $("strong", box).textContent = formatLong(selected);
     box.classList.remove("pulse"); void box.offsetWidth; box.classList.add("pulse");
     showError("");
-    if (window.innerWidth <= 900) $("#bookingForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (window.innerWidth <= 900) $("#bookingForm").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   });
 
   prevBtn.addEventListener("click", function () { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); render(); });
@@ -213,8 +220,12 @@
   render();
 
   /* ---------- Forma za upit ---------- */
-  var form = $("#bookingForm"), errorEl = $("#formError");
-  function showError(msg) { errorEl.textContent = msg; }
+  var form = $("#bookingForm"), errorEl = $("#formError"), statusEl = $("#formStatus");
+  function showError(msg) { errorEl.textContent = msg; if (msg) statusEl.textContent = ""; }
+  function markInvalid(input, bad) {
+    input.classList.toggle("invalid", bad);
+    if (bad) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+  }
 
   function buildMessage() {
     var f = form.elements;
@@ -233,14 +244,17 @@
   }
 
   function validate() {
-    var f = form.elements, ok = true;
-    [f.name, f.phone].forEach(function (input) {
-      var bad = !input.value.trim();
-      input.classList.toggle("invalid", bad);
-      if (bad) ok = false;
-    });
-    if (!selected) { showError("Izaberite slobodan datum u kalendaru."); return false; }
-    if (!ok) { showError("Unesite ime i broj telefona da bismo mogli da vas kontaktiramo."); return false; }
+    var f = form.elements;
+    var nameBad = !f.name.value.trim();
+    var phoneBad = f.phone.value.replace(/\D/g, "").length < 6;
+    var guestsBad = f.guests.value !== "" && !(+f.guests.value >= 1);
+    markInvalid(f.name, nameBad);
+    markInvalid(f.phone, phoneBad);
+    markInvalid(f.guests, guestsBad);
+    if (!selected) { showError("Prvo izaberite datum u kalendaru."); return false; }
+    if (nameBad) { showError("Upišite ime, da znamo kome odgovaramo."); f.name.focus(); return false; }
+    if (phoneBad) { showError("Upišite broj telefona sa bar 6 cifara, npr. 064 123 4567."); f.phone.focus(); return false; }
+    if (guestsBad) { showError("Broj gostiju treba da bude 1 ili više, ili ostavite polje prazno."); f.guests.focus(); return false; }
     showError("");
     return true;
   }
@@ -253,12 +267,14 @@
         // Pojedine verzije Vibera ignorišu tekst iz linka, pa poruku kopiramo i u clipboard.
         if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
         window.location.href = viberUrl(text);
+        statusEl.textContent = "Otvara se Viber sa porukom, samo pritisnite Pošalji. Ako se Viber ne otvori, poruka je kopirana: nalepite je u razgovor sa nama ili pošaljite na WhatsApp.";
       } else {
         window.open(whatsappUrl(text), "_blank", "noopener");
+        statusEl.textContent = "Otvoren je WhatsApp sa porukom, samo pritisnite Pošalji. Javljamo vam se čim vidimo poruku.";
       }
     });
   });
   $$("input", form).forEach(function (input) {
-    input.addEventListener("input", function () { input.classList.remove("invalid"); });
+    input.addEventListener("input", function () { markInvalid(input, false); });
   });
 })();
