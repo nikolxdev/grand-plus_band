@@ -29,6 +29,8 @@ U `index.html` proveriti i tekstove koji su za sada primer: brojke u sekciji „
 
 ## 2. Google kalendar (radi se jednom, ~10 minuta)
 
+Detaljno uputstvo korak po korak, sa rešavanjem problema: `GOOGLE-KALENDAR.md` (u folderu iznad `site`).
+
 ### A) Bend: kalendar za svirke
 1. Na računaru otvoriti **calendar.google.com** (nalog benda).
 2. Levo: **Drugi kalendari → + → Napravi novi kalendar**, nazvati ga npr. „Grand Plus – svirke“.
@@ -41,7 +43,7 @@ U `index.html` proveriti i tekstove koji su za sada primer: brojke u sekciji „
 2. **APIs & Services → Library → Google Calendar API → Enable**.
 3. **APIs & Services → Credentials → Create credentials → API key**.
 4. Ograničiti ključ (**Edit API key**):
-   - *Application restrictions* → **Websites** → dodati domen sajta, npr. `https://grandplusorkestar.rs/*` (i `http://localhost/*` za testiranje)
+   - *Application restrictions* → **Websites** → dodati domen sajta, npr. `https://grandplusorkestar.rs/*` (i `http://localhost:8080/*` za testiranje)
    - *API restrictions* → **Restrict key → Google Calendar API**
 5. Ključ upisati u `googleApiKey`.
 
