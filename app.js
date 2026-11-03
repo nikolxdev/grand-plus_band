@@ -76,8 +76,8 @@
     // Dok nema YouTube snimaka, upućujemo na Instagram profil
     var handle = "@" + cfg.instagram.replace(/\/+$/, "").split("/").pop();
     videos.innerHTML = '<a class="ig-box" href="' + cfg.instagram + '" target="_blank" rel="noopener">' +
-      '<span><strong>' + handle + '</strong>Snimke sa svadbi i proslava redovno kačimo na Instagram.</span>' +
-      '<em>Otvori profil →</em></a>';
+      '<strong>' + handle + '</strong>' +
+      '<span>Snimke sa svadbi i proslava redovno kačimo na Instagram.<em>Otvori profil →</em></span></a>';
     $("#snimci .text-link").hidden = true; // isti link je već u kartici ispod
   }
 

@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=17">
+  <link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 
@@ -55,6 +55,13 @@
 <section class="hero" id="top">
   <div class="container">
     <h1 class="hero-title"><span class="hero-title-1">Grand Plus</span> <span class="hero-title-2">Orkestar</span></h1>
+    <div class="hero-intro">
+      <p class="hero-sub">Bend za svadbe, krštenja, rođendane i ispraćaje. Narodna, starogradska i zabavna muzika, uživo i sa našim ozvučenjem.</p>
+      <div class="hero-actions">
+        <a href="#termini" class="btn">Izaberite datum</a>
+        <a href="#" class="hero-phone" data-tel>ili pozovite <span data-phone-display></span></a>
+      </div>
+    </div>
   </div>
 
   <!-- Natpisi ispod slika prate stil sa Instagram storija benda: IME • ULOGA -->
@@ -65,22 +72,14 @@
     <figure><img src="img/nikola.jpg" alt="Nikola, klavijaturista" width="558" height="723"><figcaption><b>Nikola</b> <span>klavijaturista</span></figcaption></figure>
     <figure><img src="img/ivan.jpg" alt="Ivan, gitarista" width="558" height="675"><figcaption><b>Ivan</b> <span>gitarista</span></figcaption></figure>
   </div>
-
-  <div class="container hero-bottom">
-    <p class="hero-sub">Svadbe, krštenja, rođendani i ispraćaji. Narodna, starogradska i zabavna muzika, uživo i sa našim ozvučenjem.</p>
-    <div class="hero-actions">
-      <a href="#termini" class="btn">Izaberite datum</a>
-      <a href="#" class="hero-phone" data-tel>ili pozovite <span data-phone-display></span></a>
-    </div>
-  </div>
 </section>
 
 <section class="section" id="bend">
   <div class="container about">
     <div>
-      <p class="about-lead">Pet muzičara, pet instrumenata i jedno pravilo: da se igra do kraja. Znamo kada sala traži kolo, a kada je vreme za staru, laganu pesmu.</p>
+      <p class="about-lead">Pet muzičara i jedno pravilo: da se igra do kraja.</p>
       <div class="about-body">
-        <p>Sviramo na svadbama, krštenjima, rođendanima i ispraćajima, a rado dolazimo i u restorane i na firmine proslave.</p>
+        <p>Znamo kada sala traži kolo, a kada je vreme za staru, laganu pesmu. Sviramo na svadbama, krštenjima, rođendanima i ispraćajima, a rado dolazimo i u restorane i na firmine proslave.</p>
         <p>Pre svake svirke se čujemo sa vama i dogovorimo šta je bitno: pesma za ulazak mladenaca, prvi ples, koja kola, šta vole stariji, a šta mlađi gosti.</p>
       </div>
     </div>
@@ -100,7 +99,7 @@
 <section class="section section-alt" id="repertoar">
   <div class="container">
     <h2>Gde i šta sviramo</h2>
-    <p class="occasions">Svadbe <i>/</i> Krštenja <i>/</i> Rođendani <i>/</i> Ispraćaji <i>/</i> Punoletstva <i>/</i> Jubileji <i>/</i> Firmine proslave <i>/</i> Restorani</p>
+    <p class="occasions">Svadbe&nbsp;<i>/</i> Krštenja&nbsp;<i>/</i> Rođendani&nbsp;<i>/</i> Ispraćaji&nbsp;<i>/</i> Punoletstva&nbsp;<i>/</i> Jubileji&nbsp;<i>/</i> Firmine proslave&nbsp;<i>/</i> Restorani</p>
     <div class="repertoire">
       <p>Narodna, stara i nova. Starogradska i sevdah. Kola i izvorna. Zabavna i ex-YU. Strani hitovi za mlađe goste.</p>
       <p>Imate pesmu koja vam mnogo znači? Pošaljite nam je par nedelja pre proslave i spremićemo je.</p>
@@ -144,8 +143,7 @@
 
       <form class="booking-form card" id="bookingForm" novalidate>
         <div class="selected-date" id="selectedDate">
-          <span class="label">Datum</span>
-          <strong>izaberite u kalendaru</strong>
+          <strong>Izaberite datum u kalendaru</strong>
         </div>
         <div class="field"><label for="fName">Ime i prezime *</label><input id="fName" name="name" required autocomplete="name"></div>
         <div class="field"><label for="fPhone">Telefon *</label><input id="fPhone" name="phone" type="tel" required autocomplete="tel" inputmode="tel"></div>
@@ -216,7 +214,7 @@
   <a href="#" data-whatsapp class="float whatsapp" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-3.3-.8-2.7-1.1-4.5-3.9-4.6-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.2 1.3z"/></svg></a>
 </div>
 
-<script src="config.js?v=17"></script>
-<script src="app.js?v=17"></script>
+<script src="config.js?v=20"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>
