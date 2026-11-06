@@ -18,7 +18,7 @@ window.SITE_CONFIG = {
 
   // ---- Google kalendar (zauzeti termini) ----
   // Uputstvo je u README.md. Dok su ova dva polja prazna, kalendar služi samo za izbor datuma (bez slobodno/zauzeto).
-  googleCalendarId: "",   // npr. "abc123@group.calendar.google.com"
+  googleCalendarId: "aa597d6dd43640ec3893e68cf7f4911ce3b025189478ec7fc877179abcde8fe3@group.calendar.google.com",
   googleApiKey: "",       // API ključ iz Google Cloud konzole (ograničen na domen sajta)
 
   // Demo zauzeti datumi: prikazuju se samo uz showDemoBusy: true dok Google kalendar nije podešen.
